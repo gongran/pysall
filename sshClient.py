@@ -64,7 +64,9 @@ def get_ssh(ip,user,pw):
     ssh.connect(ip, 22, user, pw)
     return ssh
 
-
+''' 
+下载日志文件
+'''
 def down_load_logs(log_type, date,ip,user,pw):
     lines = get_rdwp_log(log_type, date,ip,user,pw)
     t = paramiko.Transport((ip, 22))
