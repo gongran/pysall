@@ -199,7 +199,9 @@ def jiexi(key, list_t):
     print("执行最长时间是：" + str(max_time) + "毫秒！")
     print("执行最短时间是：" + str(min_time) + "毫秒！")
 
-
+'''
+main
+'''
 if (__name__ == "__main__"):
     result=os.path.isdir("logs")
     if(result!=True):
