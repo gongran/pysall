@@ -39,11 +39,14 @@ def my_ssh_client(date,ip,user,pw):
     ofile.close()
 
 
-def get_rdwp_log(log_type, date,ip,user,pw):
+def get_rdwp_log(log_type, date,ip,user,pw,serverno):
     ssh = get_ssh(ip,user,pw)
     ml = ""
     if ("rdwp" == log_type):
-        ml = "cd /data/home/rdw/logs/rdwp;ls *" + date + "*.log -rt"
+        if(serverno==2):
+            ml = "cd /data/home/rdw/logs/rdwp2;ls *" + date + "*.log -rt"
+        else:
+            ml = "cd /data/home/rdw/logs/rdwp;ls *" + date + "*.log -rt"
     elif ("rtetl" == log_type):
         ml = "cd /data/home/rdw/logs/rtetl;ls *" + date + "*.log -rt"
     stdin, stdout, stderr = ssh.exec_command(ml)
@@ -67,8 +70,8 @@ def get_ssh(ip,user,pw):
 ''' 
 下载日志文件
 '''
-def down_load_logs(log_type, date,ip,user,pw):
-    lines = get_rdwp_log(log_type, date,ip,user,pw)
+def down_load_logs(log_type, date,ip,user,pw,pathstr,serverno):
+    lines = get_rdwp_log(log_type, date,ip,user,pw,serverno)
     t = paramiko.Transport((ip, 22))
     t.connect(username=user, password=pw)
     sftp = paramiko.SFTPClient.from_transport(t)
@@ -77,7 +80,10 @@ def down_load_logs(log_type, date,ip,user,pw):
     except IOError as e:
         print(e)
     for line in lines:
-        path_str = "/data/home/rdw/logs/" + log_type + "/" + line
+        if(serverno==2):
+            path_str = pathstr + log_type + "2/" + line
+        else:
+            path_str = pathstr+ log_type + "/" + line
         sftp.get(path_str.strip('\n'), ("logs/" + line).strip("\n"))
     # sftp.get("/data/home/rdw/logs/rtetl/rtetl.log", "logs/rtetl.log")
     sftp.close()

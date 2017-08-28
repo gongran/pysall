@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 from datetime import datetime
 from sshClient import down_load_logs
 from sshClient import my_ssh_client
@@ -95,8 +96,8 @@ def monitor_rtetl_log(date, ip, user, pw):
             print("删除总数：" + str(count_del) + "条！")
 
 
-def monitor_rdwp_log(date, ip, user, pw):
-    down_load_logs("rdwp", date,ip,user,pw)
+def monitor_rdwp_log(date, ip, user, pw,pathstr,serverno):
+    down_load_logs("rdwp", date,ip,user,pw,pathstr,serverno)
     file_object = open('logs\\rd.log', 'r', encoding='utf-8')
     all_the_text = file_object.readlines()
     count = 0
@@ -129,7 +130,7 @@ def monitor_rdwp_log(date, ip, user, pw):
             count += 1
             dict_all[funcode] = list_local.get("list_" + funcode)
             # print(line)
-    # print("共调用接口：" + str(count) + "次！")
+    print("共调用接口：" + str(int(count/2)) + "次！")
     print("统计结束时间:" + end_time + " !")
     # print(list_local)
     # print(dict_all.keys())
@@ -152,7 +153,7 @@ def jiexi(key, list_t):
         alluuid.append(uuid)
     # 得到所有执行次数相同的uuid是一个
     alluuid = list(set(alluuid))
-    print("共调用接口：" + str(len(alluuid)) + "次！")
+    # print("共调用接口：" + str(len(alluuid)) + "次！")
     max_time = 0.0
     min_time = 0.0
     all_time = 0.0
@@ -200,5 +201,10 @@ def jiexi(key, list_t):
 
 
 if (__name__ == "__main__"):
-    # monitor_rtetl_log("20170824","10.145.6.236","rdw","rdw")
-    monitor_rdwp_log("20170824", "10.145.6.236", "rdw", "rdw")
+    result=os.path.isdir("logs")
+    if(result!=True):
+        os.makedirs("logs")
+    monitor_rtetl_log("20170828","10.145.6.236","rdw","rdw")
+    monitor_rdwp_log("20170828", "10.145.6.236", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
+    monitor_rdwp_log("20170828", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
+    monitor_rdwp_log("20170828", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
