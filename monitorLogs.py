@@ -1,6 +1,8 @@
 import re
 import sys
 import os
+import time
+import shutil
 from datetime import datetime
 from sshClient import down_load_logs
 from sshClient import my_ssh_client
@@ -11,9 +13,9 @@ from sshClient import my_ssh_client
 
 
 def monitor_rtetl_log(date, ip, user, pw):
-    print(sys.getdefaultencoding())
+    # print(sys.getdefaultencoding())
     my_ssh_client(date, ip, user, pw)
-    file_object = open('logs\\rt.log', 'r', encoding='gbk')
+    file_object = open('logs\\rt.log', 'r', encoding='utf-8')
     all_the_text = file_object.readlines()
 
     tables = ["DI_ANNTY_SURVIVAL_POLICY_T", "DI_ANNU_WORKD_T", "DI_APPL_T", "DI_BANKACCT_LEN_T", "DI_BANK_LIST_T",
@@ -121,7 +123,7 @@ def monitor_rdwp_log(date, ip, user, pw,pathstr,serverno):
             time = searchObj.group()
             if (start_time == ""):
                 start_time = time
-                print("统计开始时间:" + time + " !")
+                print("调用接口开始时间:" + time + " !")
             end_time = time
             dict_now["time"] = time
             if (list_local.get("list_" + funcode) == None):
@@ -131,7 +133,7 @@ def monitor_rdwp_log(date, ip, user, pw,pathstr,serverno):
             dict_all[funcode] = list_local.get("list_" + funcode)
             # print(line)
     print("共调用接口：" + str(int(count/2)) + "次！")
-    print("统计结束时间:" + end_time + " !")
+    print("调用接口结束时间:" + end_time + " !")
     # print(list_local)
     # print(dict_all.keys())
     for key in dict_all.keys():
@@ -199,14 +201,15 @@ def jiexi(key, list_t):
     print("执行最长时间是：" + str(max_time) + "毫秒！")
     print("执行最短时间是：" + str(min_time) + "毫秒！")
 
-'''
-main
-'''
 if (__name__ == "__main__"):
-    result=os.path.isdir("logs")
-    if(result!=True):
-        os.makedirs("logs")
-    monitor_rtetl_log("20170828","10.145.6.236","rdw","rdw")
-    monitor_rdwp_log("20170828", "10.145.6.236", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
-    monitor_rdwp_log("20170828", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
-    monitor_rdwp_log("20170828", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
+    # result=os.path.isdir("logs")
+    shutil.rmtree("logs",True)
+    # if(result!=True):
+    os.makedirs("logs")
+    # 默认日期为当天
+    date = time.strftime("%Y%m%d", time.localtime())
+    print("统计"+date+"日 接口和rtEtl调用情况")
+    monitor_rtetl_log("20170829","10.145.6.236","rdw","rdw")
+    # monitor_rdwp_log("20170829", "10.145.6.236", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
+    # monitor_rdwp_log("20170829", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
+    # monitor_rdwp_log("20170829", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
