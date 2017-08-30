@@ -209,7 +209,7 @@ if (__name__ == "__main__"):
     # 默认日期为当天
     date = time.strftime("%Y%m%d", time.localtime())
     print("统计"+date+"日 接口和rtEtl调用情况")
-    monitor_rtetl_log("20170829","10.145.6.236","rdw","rdw")
-    # monitor_rdwp_log("20170829", "10.145.6.236", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
-    # monitor_rdwp_log("20170829", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
-    # monitor_rdwp_log("20170829", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
+    # monitor_rtetl_log("20170830","10.145.6.236","rdw","rdw")
+    # monitor_rdwp_log("20170830", "10.145.6.236", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
+    # monitor_rdwp_log("20170830", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
+    # monitor_rdwp_log("20170830", "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
