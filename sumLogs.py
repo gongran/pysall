@@ -129,8 +129,8 @@ def monitor_rdwp_log(date, ip, user, pw, pathstr, serverno):
             count += 1
             dict_all[funcode] = list_local.get("list_" + funcode)
             # print(line)
-    print("共调用接口：" + str(int(count / 2)) + "次！")
     print("调用接口结束时间:" + end_time + " !")
+    print("共调用接口：" + str(int(count / 2)) + "次！")
     # print(list_local)
     # print(dict_all.keys())
     for key in dict_all.keys():
@@ -159,6 +159,7 @@ def jiexi(key, list_t):
     max_time = 0.0
     max_uuid = ""
     min_time = 0.0
+    min_uuid = ""
     all_time = 0.0
     count_cs = 0
     for ll in alluuid:
@@ -187,8 +188,8 @@ def jiexi(key, list_t):
                 i += 1
         count_uuid = 0
         count_cs += 1
-        if (count_cs % 10000 == 0):
-            print(str(count_cs) + ":" + ll)
+        # if (count_cs % 10000 == 0):
+        #     print(str(count_cs) + ":" + ll)
         # print(map_time[ll])
         try:
             list_n = map_time[ll]
@@ -205,33 +206,40 @@ def jiexi(key, list_t):
         # print(time2)
         date1 = datetime.strptime(time1, '%Y-%m-%d %H:%M:%S,%f')
         date2 = datetime.strptime(time2, '%Y-%m-%d %H:%M:%S,%f')
-        now_time = (date2 - date1).microseconds / 1000
-        if (now_time > 1000):
-            print(ll + ":開始時間是:" + list_n[0] + " 結束時間是：" + list_n[1])
+        now_time = (date2 - date1).total_seconds()
+        if (now_time > 1):
+            print(ll + ":开始:" + list_n[0] + " 结束：" + list_n[1]+"共花费："+str(now_time)+"秒！")
         if (now_time > max_time):
             max_time = now_time
             max_uuid = ll
         if (now_time < min_time or min_time == 0.0):
             min_time = now_time
+            min_uuid = ll
         all_time += now_time
         # print(ll+":"+str(now_time))
 
     count = len(alluuid)
     print(key + ":" + str(count) + "次！")
-    print("执行平均时间是：" + str(round((all_time / count), 3)) + "毫秒！")
-    print("执行最长时间是：" + str(max_time) + "毫秒！uuid："+max_uuid)
-    print("执行最短时间是：" + str(min_time) + "毫秒！")
+    print("执行平均时间是：" + str(round((all_time / count), 3)) + "秒！")
+    print("执行最长时间是：" + str(max_time) + "秒！uuid：" + max_uuid)
+    print("执行最短时间是：" + str(min_time) + "秒！uuid：" + min_uuid)
 
 
 if (__name__ == "__main__"):
-    # result=os.path.isdir("logs")
     # shutil.rmtree("logs",True)
     # os.makedirs("logs")
     # 默认日期为当天
     date = time.strftime("%Y%m%d", time.localtime())
+    date01 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     date = "20170905"
-    print("统计" + date + "日 接口和rtEtl调用情况")
-    # monitor_rtetl_log(date,"10.145.6.236","rdw","rdw")
+    print("统计开始时间:" + date01)
     # monitor_rdwp_log(date, "10.145.6.237", "rdw", "rdw",pathstr="/data/home/rdw/logs/",serverno=1)
     monitor_rdwp_log(date, "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=1)
     # monitor_rdwp_log(date, "10.145.6.237", "rdw", "rdw", pathstr="/data/home/rdw/logs/", serverno=2)
+    date02 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+    print("统计结束时间:" + date02)
+    date02=datetime.strptime(date02, '%Y-%m-%d %H:%M:%S')
+    date01 = datetime.strptime(date01, '%Y-%m-%d %H:%M:%S')
+    sjc=(date02-date01).total_seconds()
+    print("共花费："+str(sjc)+"秒！")
