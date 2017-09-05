@@ -2,101 +2,11 @@ import re
 import time
 from datetime import datetime
 
-from sshClient import my_ssh_client
-
-'''
-统计rtetl日志
-'''
-
-
-def monitor_rtetl_log(date, ip, user, pw):
-    # print(sys.getdefaultencoding())
-    my_ssh_client(date, ip, user, pw)
-    file_object = open('logs\\rt.log', 'r', encoding='utf-8')
-    all_the_text = file_object.readlines()
-
-    tables = ["DI_ANNTY_SURVIVAL_POLICY_T", "DI_ANNU_WORKD_T", "DI_APPL_T", "DI_BANKACCT_LEN_T", "DI_BANK_LIST_T",
-              "DI_BENF_T", "DI_CHARGE_T", "DI_CLIENT_ACCT_T", "DI_CLIENT_T", "DI_CODE_DESC_T", "DI_COMPANY_T",
-              "DI_DIVD_T",
-              "DI_EXPIRE_POLICY_T", "DI_GRP_CLIENT_ACCT_T", "DI_GRP_CLIENT_T", "DI_GRP_POLICY_DTL_T",
-              "DI_GRP_POLICY_LIST_T", "DI_GUIDE_TIME_T", "DI_HOSPITAL_LIST_T", "DI_IMAGE_T", "DI_INSURED_T",
-              "DI_INSURE_T",
-              "DI_NOTE_CODE_CONF_T", "DI_NOTE_REPLY_CONFMN_T", "DI_OCCUP_T", "DI_ORG_AGENCY_T", "DI_ORG_BOS_T",
-              "DI_ORG_BROKER_T", "DI_ORG_DMTM_T", "DI_ORG_WS_T", "DI_PAY_BANK_T", "DI_PAY_NET_T", "DI_PAY_T",
-              "DI_POLICY_T",
-              "DI_PRODUCT_T", "DI_RELAY_T", "FA_AGENCY_ASSESS_T", "FA_AGENCY_PERSIS_T", "FA_AGENT_COMMISSION_T",
-              "FA_CLAIM_CASE_T", "FA_CLAIM_T", "FA_GRP_INSC_CLM_T", "FA_NOTICE_T", "FA_PERSIS_CONVT_COEF_T",
-              "FA_POLICY_DTL_OWE_T", "FA_RENEW_LIST_T", "FA_UNLNK_UNIV_ACCT_BAL_T", "FA_UNLNK_UNIV_PRICE_T",
-              "GRP_CUST_CONF_INFO_T"]
-    for table in tables:
-        print("---------------------------------------------------")
-        index = 0
-        index_table = 0
-        # 所有消耗时间
-        list_time = []
-        time_all = 0
-        time_max = 0
-        time_min = 0
-        count_update = 0
-        count_del = 0
-        for line in all_the_text:
-
-            # print(line.index(table,0))
-            if (line.find(table) > -1):
-                if (index_table == 0):
-                    index_table += 1
-                    # print("第一条语句是" + line)
-                    # 匹配时间
-                    searchObj = re.search(r"\d{4}(\-|\/|\.)\d{1,2}\1\d{1,2} \d{2}:\d{2}:\d{2},\d{3}", line)
-                    print("开始执行时间是：" + searchObj.group())
-                # print(line)
-
-                if (line.find("共更新了") > -1):
-                    searchObj = re.search(r".+(\d+)条", line)
-                    num = int(searchObj.group(1))
-                    count_update += num
-                    # if (num > 0):
-                    #     print(searchObj.group())
-                    #     print(num)
-
-                if (line.find("共删除了") > -1):
-                    searchObj = re.search(r".+(\d+)条", line)
-                    num = int(searchObj.group(1))
-                    count_del += num
-                    # if (num > 0):
-                    #     print(searchObj.group())
-                    #     print(num)
-
-                if (line.find("共花费了") > -1):
-                    index += 1
-                    # 匹配花费时间
-                    searchObj = re.search(r"(\d+\.\d+)秒", line)
-                    # print(line)
-                    now_time = searchObj.group(1)
-                    time_all = round(time_all + float(now_time), 3)
-
-                    # 统计最大时间
-                    if (float(now_time) > time_max):
-                        time_max = float(now_time)
-
-                    # 统计最小时间
-                    if (float(now_time) < time_max):
-                        time_min = float(now_time)
-                    # print(searchObj.group(1))
-                    # print(time_all)
-                    list_time.append(searchObj.group(1))
-
-        print(table + "共执行了" + str(index) + "次！")
-        if (index > 0):
-            print("平均耗时：" + str(round(time_all / index, 3)) + "秒！")
-            print("最大耗时：" + str(time_max) + "秒！")
-            print("最小耗时：" + str(time_min) + "秒！")
-            print("更新总数：" + str(count_update) + "条！")
-            print("删除总数：" + str(count_del) + "条！")
+from sshClient import down_load_logs
 
 
 def monitor_rdwp_log(date, ip, user, pw, pathstr, serverno):
-    # down_load_logs("rdwp", date,ip,user,pw,pathstr,serverno)
+    down_load_logs("rdwp", date, ip, user, pw, pathstr, serverno)
     file_object = open('logs\\rd.log', 'r', encoding='utf-8')
     all_the_text = file_object.readlines()
     count = 0
@@ -208,7 +118,7 @@ def jiexi(key, list_t):
         date2 = datetime.strptime(time2, '%Y-%m-%d %H:%M:%S,%f')
         now_time = (date2 - date1).total_seconds()
         if (now_time > 1):
-            print(ll + ":开始:" + list_n[0] + " 结束：" + list_n[1]+"共花费："+str(now_time)+"秒！")
+            print(ll + ":开始:" + list_n[0] + " 结束：" + list_n[1] + "共花费：" + str(now_time) + "秒！")
         if (now_time > max_time):
             max_time = now_time
             max_uuid = ll
@@ -239,7 +149,7 @@ if (__name__ == "__main__"):
     date02 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     print("统计结束时间:" + date02)
-    date02=datetime.strptime(date02, '%Y-%m-%d %H:%M:%S')
+    date02 = datetime.strptime(date02, '%Y-%m-%d %H:%M:%S')
     date01 = datetime.strptime(date01, '%Y-%m-%d %H:%M:%S')
-    sjc=(date02-date01).total_seconds()
-    print("共花费："+str(sjc)+"秒！")
+    sjc = (date02 - date01).total_seconds()
+    print("共花费：" + str(sjc) + "秒！")
